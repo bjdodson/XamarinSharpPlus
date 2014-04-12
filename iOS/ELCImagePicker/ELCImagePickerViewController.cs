@@ -14,6 +14,23 @@ namespace ELCPicker
         public UIImage Image { get; set; }
     }
 
+
+    /** 
+     * Presents a photo picker dialog capable of selecting multiple images at once.
+     * Usage:
+     * 
+     * var picker = ELCImagePickerViewController.Instance;
+     * picker.MaximumImagesCount = 15;
+     * picker.Completion.ContinueWith (t => {
+     *   if (t.IsCancelled || t.Exception != null) {
+     *     // no pictures for you!
+     *   } else {
+     *      // t.Result is a List<AssetResult>
+     *    }
+     * });
+     * 
+     * PresentViewController (picker, true, null);
+     */
     public class ELCImagePickerViewController : UINavigationController
     {
         public int MaximumImagesCount { get; set; }
