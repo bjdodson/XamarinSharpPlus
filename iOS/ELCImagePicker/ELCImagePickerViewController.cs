@@ -316,10 +316,13 @@ namespace ELCPicker
 
                 bool isAssetFiltered = false;
                 /*if (self.assetPickerFilterDelegate &&
-                [self.assetPickerFilterDelegate respondsToSelector:@selector(assetTablePicker:isAssetFilteredOut:)])
-            {
-                isAssetFiltered = [self.assetPickerFilterDelegate assetTablePicker:self isAssetFilteredOut:(ELCAsset*)elcAsset];
-            }*/
+                    [self.assetPickerFilterDelegate respondsToSelector:@selector(assetTablePicker:isAssetFilteredOut:)])
+                {
+                    isAssetFiltered = [self.assetPickerFilterDelegate assetTablePicker:self isAssetFilteredOut:(ELCAsset*)elcAsset];
+                }*/
+
+                if (result.DefaultRepresentation == null)
+                    isAssetFiltered = true;
 
                 if (!isAssetFiltered) {
                     ElcAssets.Add (elcAsset);
