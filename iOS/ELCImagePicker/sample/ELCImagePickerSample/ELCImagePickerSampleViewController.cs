@@ -1,8 +1,11 @@
 ﻿using System;
 using System.Drawing;
-
 using Foundation;
 using UIKit;
+using ELCImagePicker;
+using System.Threading;
+using System.Threading.Tasks;
+using System.Collections.Generic;
 
 namespace ELCImagePickerSample
 {
@@ -18,6 +21,25 @@ namespace ELCImagePickerSample
 			base.DidReceiveMemoryWarning();
 			
 			// Release any cached data, images, etc that aren't in use.
+		}
+
+		partial void OnClickBrowse(UIButton sender)
+		{
+
+		    var picker = ELCImagePickerViewController.Instance;
+		    picker.MaximumImagesCount = 15;
+
+		    picker.Completion.ContinueWith (t => {
+			      if (t.IsCanceled || t.Exception != null) 
+					{
+			            
+					} else {
+						var items = t.Result is List<AssetResult>;
+					}
+				 });
+			
+			this.PresentViewController (picker, true, null);
+
 		}
 
 		#region View lifecycle

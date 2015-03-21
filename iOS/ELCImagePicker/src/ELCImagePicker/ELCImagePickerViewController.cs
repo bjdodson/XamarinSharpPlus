@@ -7,7 +7,7 @@ using Foundation;
 using System.Threading.Tasks;
 using CoreGraphics;
 
-namespace ELCPicker
+namespace ELCImagePicker
 {
 	/// <summary>
 	/// Asset result.
