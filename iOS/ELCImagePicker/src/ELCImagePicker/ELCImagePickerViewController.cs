@@ -1,17 +1,44 @@
 ﻿using System;
-using MonoTouch.UIKit;
-using MonoTouch.AssetsLibrary;
-using Vernacular;
+using UIKit;
+using AssetsLibrary;
 using System.Collections.Generic;
 using System.Drawing;
-using MonoTouch.Foundation;
+using Foundation;
 using System.Threading.Tasks;
+using CoreGraphics;
 
 namespace ELCPicker
 {
+	/// <summary>
+	/// Asset result.
+	/// </summary>
     public class AssetResult
     {
+		/// <summary>
+		/// Gets or sets the name.
+		/// </summary>
+		/// <value>The name.</value>
+		public String Name
+		{
+			get;
+			set;
+		}
+
+		/// <summary>
+		/// Selected image
+		/// </summary>
+		/// <value>The image.</value>
         public UIImage Image { get; set; }
+
+		/// <summary>
+		/// Gets or sets the path.
+		/// </summary>
+		/// <value>The path.</value>
+		public String Path
+		{
+			get;
+			set;
+		} 
     }
 
 
@@ -88,10 +115,10 @@ namespace ELCPicker
         {
             var shouldSelect = MaximumImagesCount <= 0 || previousCount < MaximumImagesCount;
             if (!shouldSelect) {
-                string title = Catalog.Format (Catalog.GetString ("Only {0} photos please!"), MaximumImagesCount);
-                string message = Catalog.Format (Catalog.GetString ("You can only send {0} photos at a time."), MaximumImagesCount);
-                var alert = new UIAlertView (title, message, null, null, Catalog.GetString ("Okay"));
-                alert.Show ();
+                string title = String.Format ("Only {0} photos please!", MaximumImagesCount);
+			   string message = String.Format("You can only send {0} photos at a time.", MaximumImagesCount);
+			   var alert = new UIAlertView (title, message, null, null, "Okay");
+               alert.Show ();
             }
             return shouldSelect;
         }
@@ -121,7 +148,7 @@ namespace ELCPicker
             {
                 base.ViewDidLoad ();
 
-                NavigationItem.Title = Catalog.GetString ("Loading...");
+			    NavigationItem.Title = "Loading...";
                 var cancelButton = new UIBarButtonItem (UIBarButtonSystemItem.Cancel/*, cancelImagePicker*/);
                 cancelButton.Clicked += CancelClicked;
                 NavigationItem.RightBarButtonItem = cancelButton;
@@ -148,7 +175,7 @@ namespace ELCPicker
                 }
             }
 
-            void GroupsEnumeratorFailed (MonoTouch.Foundation.NSError error)
+            void GroupsEnumeratorFailed (NSError error)
             {
                 Console.WriteLine ("Enumerator failed!");
             }
@@ -172,20 +199,20 @@ namespace ELCPicker
             void ReloadTableView ()
             {
                 TableView.ReloadData ();
-                NavigationItem.Title = Catalog.GetString ("Select an Album");
+			    NavigationItem.Title = "Select an Album";
             }
 
-            public override int NumberOfSections (UITableView tableView)
+            public override nint NumberOfSections (UITableView tableView)
             {
                 return 1;
             }
 
-            public override int RowsInSection (UITableView tableview, int section)
+            public override nint RowsInSection (UITableView tableview, nint section)
             {
                 return AssetGroups.Count;
             }
 
-            public override UITableViewCell GetCell (UITableView tableView, MonoTouch.Foundation.NSIndexPath indexPath)
+            public override UITableViewCell GetCell (UITableView tableView, NSIndexPath indexPath)
             {
                 const string cellIdentifier = "Cell";
 
@@ -218,7 +245,7 @@ namespace ELCPicker
                 NavigationController.PushViewController (picker, true);
             }
 
-            public override float GetHeightForRow (UITableView tableView, NSIndexPath indexPath)
+            public override nfloat GetHeightForRow (UITableView tableView, NSIndexPath indexPath)
             {
                 return 57;
             }
@@ -262,7 +289,7 @@ namespace ELCPicker
                     var doneButtonItem = new UIBarButtonItem (UIBarButtonSystemItem.Done);
                     doneButtonItem.Clicked += DoneClicked;
                     NavigationItem.RightBarButtonItem = doneButtonItem;
-                    NavigationItem.Title = Catalog.GetString ("Loading...");
+				    NavigationItem.Title = "Loading...";
                 }
 
                 Task.Run ((Action)PreparePhotos);
@@ -296,17 +323,17 @@ namespace ELCPicker
                 _Dispatcher.BeginInvokeOnMainThread (() => {
                     TableView.ReloadData ();
                     // scroll to bottom
-                    int section = NumberOfSections (TableView) - 1;
-                    int row = TableView.NumberOfRowsInSection (section) - 1;
+                    var section = NumberOfSections (TableView) - 1;
+                    var row = TableView.NumberOfRowsInSection (section) - 1;
                     if (section >= 0 && row >= 0) {
                         var ip = NSIndexPath.FromRowSection (row, section);
                         TableView.ScrollToRow (ip, UITableViewScrollPosition.Bottom, false);
                     }
-                    NavigationItem.Title = SingleSelection ? Catalog.GetString ("Pick Photo") : Catalog.GetString ("Pick Photos");
+				NavigationItem.Title = SingleSelection ? "Pick Photo" : "Pick Photos";
                 });
             }
 
-            void PhotoEnumerator (ALAsset result, int index, ref bool stop)
+            void PhotoEnumerator (ALAsset result, nint index, ref bool stop)
             {
                 if (result == null) {
                     return;
@@ -377,12 +404,12 @@ namespace ELCPicker
                 }
             }
 
-            public override int NumberOfSections (UITableView tableView)
+            public override nint NumberOfSections (UITableView tableView)
             {
                 return 1;
             }
 
-            public override int RowsInSection (UITableView tableview, int section)
+            public override nint RowsInSection (UITableView tableview, nint section)
             {
                 if (Columns <= 0)
                     return 4;
@@ -409,7 +436,7 @@ namespace ELCPicker
                 return cell;
             }
 
-            public override float GetHeightForRow (UITableView tableView, NSIndexPath indexPath)
+            public override nfloat GetHeightForRow (UITableView tableView, NSIndexPath indexPath)
             {
                 return 79;
             }
@@ -508,11 +535,11 @@ namespace ELCPicker
 
                 void CellTapped (UITapGestureRecognizer tapRecognizer)
                 {
-                    PointF point = tapRecognizer.LocationInView (this);
+                    var point = tapRecognizer.LocationInView (this);
                     var totalWidth = Columns * 75 + (Columns - 1) * 4;
                     var startX = (Bounds.Size.Width - totalWidth) / 2;
 
-                    var frame = new RectangleF (startX, 2, 75, 75);
+                    var frame = new CGRect (startX, 2, 75, 75);
                     for (int i = 0; i < RowAssets.Count; ++i) {
                         if (frame.Contains (point)) {
                             ELCAsset asset = RowAssets [i];
@@ -522,7 +549,7 @@ namespace ELCPicker
                             break;
                         }
                         var x = frame.X + frame.Width + 4;
-                        frame = new RectangleF (x, frame.Y, frame.Width, frame.Height);
+					frame = new CGRect (x, frame.Y, frame.Width, frame.Height);
                     }
                 }
 
@@ -531,7 +558,7 @@ namespace ELCPicker
                     var totalWidth = Columns * 75 + (Columns - 1) * 4;
                     var startX = (Bounds.Size.Width - totalWidth) / 2;
 
-                    var frame = new RectangleF (startX, 2, 75, 75);
+				var frame = new CGRect (startX, 2, 75, 75);
 
                     int i = 0;
                     foreach (var imageView in ImageViewArray) {
@@ -543,7 +570,7 @@ namespace ELCPicker
                         AddSubview (overlayView);
 
                         var x = frame.X + frame.Width + 4;
-                        frame = new RectangleF (x, frame.Y, frame.Width, frame.Height);
+					frame = new CGRect (x, frame.Y, frame.Width, frame.Height);
                     }
                 }
             }
