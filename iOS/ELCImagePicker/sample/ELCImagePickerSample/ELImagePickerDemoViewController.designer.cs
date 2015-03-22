@@ -11,13 +11,9 @@ using UIKit;
 
 namespace ELCImagePickerSample
 {
-	[Register ("ELCImagePickerSampleViewController")]
-	partial class ELCImagePickerSampleViewController
+	[Register ("ELImagePickerDemoViewController")]
+	partial class ELImagePickerDemoViewController
 	{
-		[Action ("OnClickBrowse:")]
-		[GeneratedCode ("iOS Designer", "1.0")]
-		partial void OnClickBrowse (UIButton sender);
-
 		void ReleaseDesignerOutlets ()
 		{
 		}

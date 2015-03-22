@@ -106,9 +106,9 @@
   <ItemGroup>
     <Compile Include="Main.cs" />
     <Compile Include="AppDelegate.cs" />
-    <Compile Include="ELCImagePickerSampleViewController.cs" />
-    <Compile Include="ELCImagePickerSampleViewController.designer.cs">
-      <DependentUpon>ELCImagePickerSampleViewController.cs</DependentUpon>
+    <Compile Include="ELImagePickerDemoViewController.cs" />
+    <Compile Include="ELImagePickerDemoViewController.designer.cs">
+      <DependentUpon>ELImagePickerDemoViewController.cs</DependentUpon>
     </Compile>
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\iOS\Xamarin.iOS.CSharp.targets" />

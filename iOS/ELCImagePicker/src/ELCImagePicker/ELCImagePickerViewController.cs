@@ -99,6 +99,9 @@ namespace ELCImagePicker
                     UIImageOrientation orientation = UIImageOrientation.Up;
                     var cgImage = rep.GetFullScreenImage ();
                     result.Image = new UIImage (cgImage, 1.0f, orientation);
+				    result.Name = rep.Filename;
+				    result.Path = rep.Url.AbsoluteString;
+
                     results.Add (result);
                 }
             }

@@ -1,0 +1,30 @@
+%YAML 1.2
+---
+build: 
+  - path: src/ELCImagePicker.sln
+    configuration: Release
+name: ELCImagePicker
+id: elcimagepicker
+publisher: David Humphreys
+license: component/License.md
+icons: 
+  - component/dsgridview_128x128.png
+  - component/dsgridview_512x512.png
+publisher-url: http://www.dsoftonline.com
+libraries: 
+  ios-unified: 
+    - src/DSoft.Datatypes/bin/Release/DSoft.Datatypes.dll
+summary: A lightweight and simple-to-use data grid for iPhone and iPad
+details: component/Details.md
+screenshots: 
+  - component/screenshots/Screen1.png
+  - component/screenshots/Screen2.png
+  - component/screenshots/Screen3.png
+getting-started: component/GettingStarted.md
+version: 3.0.2
+samples: 
+  - path: samples/ELCImagePickerSample.sln
+    name: iOS Sample
+    nobuild: "true"
+    configuration: Release|iPhone
+...
