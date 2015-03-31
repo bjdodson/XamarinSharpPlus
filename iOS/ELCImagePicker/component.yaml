@@ -13,7 +13,7 @@ icons:
 publisher-url: http://www.dsoftonline.com
 libraries: 
   ios-unified: 
-    - src/DSoft.Datatypes/bin/Release/DSoft.Datatypes.dll
+    - src/ELCImagePicker/bin/Release/ELCImagePicker.dll
 summary: A lightweight and simple-to-use data grid for iPhone and iPad
 details: component/Details.md
 screenshots: 
@@ -23,7 +23,7 @@ screenshots:
 getting-started: component/GettingStarted.md
 version: 3.0.2
 samples: 
-  - path: samples/ELCImagePickerSample.sln
+  - path: sample/ELCImagePickerSample.sln
     name: iOS Sample
     nobuild: "true"
     configuration: Release|iPhone

@@ -3,7 +3,7 @@
   <MonoDevelop.Ide.Workbench ActiveDocument="../src/ELCImagePicker/ELCImagePickerViewController.cs">
     <Files>
       <File FileName="../src/ELCImagePicker/ELCImagePickerViewController.cs" Line="105" Column="1" />
-      <File FileName="ELCImagePickerSample/ELImagePickerDemoViewController.cs" Line="26" Column="39" />
+      <File FileName="ELCImagePickerSample/ELImagePickerDemoViewController.cs" Line="1" Column="1" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>

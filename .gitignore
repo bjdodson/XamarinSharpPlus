@@ -1,5 +1,15 @@
 bin
 obj
+xkpg
+
 *.suo
 *.user
+*.userprefs
+
+*.zip
+
+*.userprefs
+
+*.exe
+
 *.userprefs
