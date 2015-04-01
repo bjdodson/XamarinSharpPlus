@@ -5,23 +5,22 @@ build:
     configuration: Release
 name: ELCImagePicker
 id: elcimagepicker
-publisher: David Humphreys
+publisher: Dave Humphreys
 license: component/License.md
 icons: 
-  - component/dsgridview_128x128.png
-  - component/dsgridview_512x512.png
+  - component/elcimagepicker_128x128.png
+  - component/elcimagepicker_512x512.png
 publisher-url: http://www.dsoftonline.com
 libraries: 
   ios-unified: 
     - src/ELCImagePicker/bin/Release/ELCImagePicker.dll
-summary: A lightweight and simple-to-use data grid for iPhone and iPad
+summary: A Multi-Image picker that uses the asset library
 details: component/Details.md
 screenshots: 
-  - component/screenshots/Screen1.png
-  - component/screenshots/Screen2.png
-  - component/screenshots/Screen3.png
+  - component/screenshots/Screen1.jpg
+  - component/screenshots/Screen2.jpg
 getting-started: component/GettingStarted.md
-version: 3.0.2
+version: 1.0
 samples: 
   - path: sample/ELCImagePickerSample.sln
     name: iOS Sample
