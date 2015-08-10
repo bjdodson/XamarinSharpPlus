@@ -527,7 +527,7 @@ namespace ELCImagePicker
                             overlayView.Hidden = !asset.Selected;
                         } else {
                             if (overlayImage == null) {
-							     overlayImage = UIImage.FromFile("overlay.png");
+							     overlayImage = UIImage.FromBundle("overlay.png");
                             }
                             var overlayView = new UIImageView (overlayImage);
                             OverlayViewArray.Add (overlayView);
