@@ -75,7 +75,7 @@ namespace ELCImagePicker
                 var picker = new ELCImagePickerViewController (albumPicker);
                 albumPicker.Parent = picker;
                 picker.MaximumImagesCount = 4;
-                picker.NavigationBar.BarStyle = UIBarStyle.Black;
+                //picker.NavigationBar.BarStyle = UIBarStyle.Black;
                 return picker;
             }
         }
@@ -527,7 +527,7 @@ namespace ELCImagePicker
                             overlayView.Hidden = !asset.Selected;
                         } else {
                             if (overlayImage == null) {
-                                overlayImage = new UIImage ("Overlay.png");
+							     overlayImage = UIImage.FromFile("overlay.png");
                             }
                             var overlayView = new UIImageView (overlayImage);
                             OverlayViewArray.Add (overlayView);
