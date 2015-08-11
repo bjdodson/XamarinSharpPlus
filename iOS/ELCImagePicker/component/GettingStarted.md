@@ -27,4 +27,12 @@ The `AssetResult` class has three properties
  * Image (UIImage)
  
 You can use these to access the UIImage for the selected images and also the name and Asset Library path, for loading it later.
+  
+**Localisation**
+
+Most of the labels and strings support localisation.  The sample provides an english string file to use as the basis for implementing other languages.
+
+Simply create a folder in the resources folder within your iOS project which is prefixed with the ISO language code for the required language.  Create an empty file called "Localizable.strings" and then duplicate the keys for the english language and then replace the phrases with the localised versions.  
+
+
 

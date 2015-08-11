@@ -6,6 +6,7 @@
  * Support for Xamarin.iOS Unified API
  * Returns UIImage, Name and Asset path of the selected items
  * TPL-friendly Interface
+ * Localization support
  
 ## Usage
 
