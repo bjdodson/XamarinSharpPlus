@@ -15,3 +15,5 @@ xkpg
 *.userprefs
 
 iOS/ELCImagePicker/sample/ELCImagePickerSample.userprefs
+
+*.xam
