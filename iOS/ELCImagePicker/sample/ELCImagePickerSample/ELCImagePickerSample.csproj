@@ -118,4 +118,10 @@
       <Name>ELCImagePicker</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Resources\en.lproj\" />
+  </ItemGroup>
+  <ItemGroup>
+    <BundleResource Include="Resources\en.lproj\Localizable.strings" />
+  </ItemGroup>
 </Project>

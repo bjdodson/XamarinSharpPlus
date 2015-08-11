@@ -12,8 +12,8 @@ namespace ELCImagePicker
 	/// <summary>
 	/// Asset result.
 	/// </summary>
-    public class AssetResult
-    {
+	public class AssetResult
+	{
 		/// <summary>
 		/// Gets or sets the name.
 		/// </summary>
@@ -28,7 +28,7 @@ namespace ELCImagePicker
 		/// Selected image
 		/// </summary>
 		/// <value>The image.</value>
-        public UIImage Image { get; set; }
+		public UIImage Image { get; set; }
 
 		/// <summary>
 		/// Gets or sets the path.
@@ -38,11 +38,11 @@ namespace ELCImagePicker
 		{
 			get;
 			set;
-		} 
-    }
+		}
+	}
 
 
-    /** 
+	/** 
      * Presents a photo picker dialog capable of selecting multiple images at once.
      * Usage:
      * 
@@ -58,525 +58,600 @@ namespace ELCImagePicker
      * 
      * PresentViewController (picker, true, null);
      */
-    public class ELCImagePickerViewController : UINavigationController
-    {
-        public int MaximumImagesCount { get; set; }
+	public class ELCImagePickerViewController : UINavigationController
+	{
+		public int MaximumImagesCount { get; set; }
 
-        readonly TaskCompletionSource<List<AssetResult>> _TaskCompletionSource = new TaskCompletionSource<List<AssetResult>> ();
-        public Task<List<AssetResult>> Completion {
-            get {
-                return _TaskCompletionSource.Task;
-            }
-        }
+		readonly TaskCompletionSource<List<AssetResult>> _TaskCompletionSource = new TaskCompletionSource<List<AssetResult>>();
 
-        public static ELCImagePickerViewController Instance {
-            get {
-                var albumPicker = new ELCAlbumPickerController ();
-                var picker = new ELCImagePickerViewController (albumPicker);
-                albumPicker.Parent = picker;
-                picker.MaximumImagesCount = 4;
-                //picker.NavigationBar.BarStyle = UIBarStyle.Black;
-                return picker;
-            }
-        }
+		public Task<List<AssetResult>> Completion
+		{
+			get
+			{
+				return _TaskCompletionSource.Task;
+			}
+		}
 
-        ELCImagePickerViewController (UIViewController rootController) : base (rootController)
-        {
+		public static ELCImagePickerViewController Instance
+		{
+			get
+			{
+				var albumPicker = new ELCAlbumPickerController();
+				var picker = new ELCImagePickerViewController(albumPicker);
+				albumPicker.Parent = picker;
+				picker.MaximumImagesCount = 4;
+				//picker.NavigationBar.BarStyle = UIBarStyle.Black;
+				return picker;
+			}
+		}
 
-        }
+		ELCImagePickerViewController(UIViewController rootController) : base(rootController)
+		{
 
-        void SelectedAssets (List<ALAsset> assets)
-        {
-            var results = new List<AssetResult> (assets.Count);
-            foreach (var asset in assets) {
-                var obj = asset.AssetType;
-                if (obj == default (ALAssetType))
-                    continue;
+		}
 
-                var rep = asset.DefaultRepresentation;
-                if (rep != null) {
-                    var result = new AssetResult ();
-                    UIImageOrientation orientation = UIImageOrientation.Up;
-                    var cgImage = rep.GetFullScreenImage ();
-                    result.Image = new UIImage (cgImage, 1.0f, orientation);
-				    result.Name = rep.Filename;
-				    result.Path = rep.Url.AbsoluteString;
+		void SelectedAssets(List<ALAsset> assets)
+		{
+			var results = new List<AssetResult>(assets.Count);
+			foreach (var asset in assets)
+			{
+				var obj = asset.AssetType;
+				if (obj == default (ALAssetType))
+					continue;
 
-                    results.Add (result);
-                }
-            }
+				var rep = asset.DefaultRepresentation;
+				if (rep != null)
+				{
+					var result = new AssetResult();
+					UIImageOrientation orientation = UIImageOrientation.Up;
+					var cgImage = rep.GetFullScreenImage();
+					result.Image = new UIImage(cgImage, 1.0f, orientation);
+					result.Name = rep.Filename;
+					result.Path = rep.Url.AbsoluteString;
 
-            _TaskCompletionSource.TrySetResult (results);
-        }
+					results.Add(result);
+				}
+			}
 
-        void CancelledPicker ()
-        {
-            _TaskCompletionSource.TrySetCanceled ();
-        }
+			_TaskCompletionSource.TrySetResult(results);
+		}
 
-        bool ShouldSelectAsset (ALAsset asset, int previousCount)
-        {
-            var shouldSelect = MaximumImagesCount <= 0 || previousCount < MaximumImagesCount;
-            if (!shouldSelect) {
-                string title = String.Format ("Only {0} photos please!", MaximumImagesCount);
-			   string message = String.Format("You can only send {0} photos at a time.", MaximumImagesCount);
-			   var alert = new UIAlertView (title, message, null, null, "Okay");
-               alert.Show ();
-            }
-            return shouldSelect;
-        }
+		void CancelledPicker()
+		{
+			_TaskCompletionSource.TrySetCanceled();
+		}
 
-        public class ELCAlbumPickerController : UITableViewController
-        {
-            static readonly NSObject _Dispatcher = new NSObject();
-            readonly List<ALAssetsGroup> AssetGroups = new List<ALAssetsGroup> ();
+		bool ShouldSelectAsset(ALAsset asset, int previousCount)
+		{
+			var shouldSelect = MaximumImagesCount <= 0 || previousCount < MaximumImagesCount;
+			if (!shouldSelect)
+			{
+				var first = NSBundle.MainBundle.LocalizedString("Only", "Only");
+				var second = NSBundle.MainBundle.LocalizedString("photos please", "photos please!");
 
-            ALAssetsLibrary Library;
+				string title = String.Format("{0} {1} {2}", first, MaximumImagesCount, second);
 
-            WeakReference _Parent;
-            public ELCImagePickerViewController Parent {
-                get {
-                    return _Parent == null ? null : _Parent.Target as ELCImagePickerViewController;
-                }
-                set {
-                    _Parent = new WeakReference (value);
-                }
-            }
+			    var third = NSBundle.MainBundle.LocalizedString("You can only send", "You can only send");
+			    var fourth = NSBundle.MainBundle.LocalizedString("photos at a time", "photos at a time.");
+			     
+			    string message = String.Format("{0} {1} {2}",third, MaximumImagesCount, fourth);
+				var alert = new UIAlertView(title, message, null, null, NSBundle.MainBundle.LocalizedString("Okay", "Okay"));
+				alert.Show();
+			}
+			return shouldSelect;
+		}
 
-            public ELCAlbumPickerController ()
-            {
-            }
+		public class ELCAlbumPickerController : UITableViewController
+		{
+			static readonly NSObject _Dispatcher = new NSObject();
+			readonly List<ALAssetsGroup> AssetGroups = new List<ALAssetsGroup>();
 
-            public override void ViewDidLoad ()
-            {
-                base.ViewDidLoad ();
+			ALAssetsLibrary Library;
 
-			    NavigationItem.Title = "Loading...";
-                var cancelButton = new UIBarButtonItem (UIBarButtonSystemItem.Cancel/*, cancelImagePicker*/);
-                cancelButton.Clicked += CancelClicked;
-                NavigationItem.RightBarButtonItem = cancelButton;
+			WeakReference _Parent;
 
-                AssetGroups.Clear ();
+			public ELCImagePickerViewController Parent
+			{
+				get
+				{
+					return _Parent == null ? null : _Parent.Target as ELCImagePickerViewController;
+				}
+				set
+				{
+					_Parent = new WeakReference(value);
+				}
+			}
 
-                Library = new ALAssetsLibrary ();
-                Library.Enumerate (ALAssetsGroupType.All, GroupsEnumerator, GroupsEnumeratorFailed);
-            }
+			public ELCAlbumPickerController()
+			{
+			}
 
-            public override void ViewDidDisappear (bool animated)
-            {
-                base.ViewDidDisappear (animated);
-                if (IsMovingFromParentViewController || IsBeingDismissed) {
-                    NavigationItem.RightBarButtonItem.Clicked -= CancelClicked;
-                }
-            }
+			public override void ViewDidLoad()
+			{
+				base.ViewDidLoad();
 
-            void CancelClicked (object sender = null, EventArgs e = null)
-            {
-                var parent = Parent;
-                if (parent != null) {
-                    parent.CancelledPicker ();
-                }
-            }
+				NavigationItem.Title = NSBundle.MainBundle.LocalizedString("Loading", "Loading...");
+				var cancelButton = new UIBarButtonItem(UIBarButtonSystemItem.Cancel);
+				cancelButton.Clicked += CancelClicked;
+				NavigationItem.RightBarButtonItem = cancelButton;
 
-            void GroupsEnumeratorFailed (NSError error)
-            {
-                Console.WriteLine ("Enumerator failed!");
-            }
+				AssetGroups.Clear();
 
-            void GroupsEnumerator (ALAssetsGroup agroup, ref bool stop)
-            {
-                if (agroup == null) {
-                    return;
-                }
+				Library = new ALAssetsLibrary();
+				Library.Enumerate(ALAssetsGroupType.All, GroupsEnumerator, GroupsEnumeratorFailed);
+			}
 
-                // added fix for camera albums order
-                if (agroup.Name.ToString ().ToLower () == "camera roll" && agroup.Type == ALAssetsGroupType.SavedPhotos) {
-                    AssetGroups.Insert (0, agroup);
-                } else {
-                    AssetGroups.Add (agroup);
-                }
+			public override void ViewDidDisappear(bool animated)
+			{
+				base.ViewDidDisappear(animated);
+				if (IsMovingFromParentViewController || IsBeingDismissed)
+				{
+					NavigationItem.RightBarButtonItem.Clicked -= CancelClicked;
+				}
+			}
 
-                _Dispatcher.BeginInvokeOnMainThread (ReloadTableView);
-            }
+			void CancelClicked(object sender = null, EventArgs e = null)
+			{
+				var parent = Parent;
+				if (parent != null)
+				{
+					parent.CancelledPicker();
+				}
+			}
 
-            void ReloadTableView ()
-            {
-                TableView.ReloadData ();
-			    NavigationItem.Title = "Select an Album";
-            }
+			void GroupsEnumeratorFailed(NSError error)
+			{
+				Console.WriteLine(NSBundle.MainBundle.LocalizedString("Enumerator failed", "Enumerator failed!"));
+			}
 
-            public override nint NumberOfSections (UITableView tableView)
-            {
-                return 1;
-            }
+			void GroupsEnumerator(ALAssetsGroup agroup, ref bool stop)
+			{
+				if (agroup == null)
+				{
+					return;
+				}
 
-            public override nint RowsInSection (UITableView tableview, nint section)
-            {
-                return AssetGroups.Count;
-            }
+				// added fix for camera albums order
+				if (agroup.Name.ToString().ToLower() == "camera roll" && agroup.Type == ALAssetsGroupType.SavedPhotos)
+				{
+					AssetGroups.Insert(0, agroup);
+				}
+				else
+				{
+					AssetGroups.Add(agroup);
+				}
 
-            public override UITableViewCell GetCell (UITableView tableView, NSIndexPath indexPath)
-            {
-                const string cellIdentifier = "Cell";
+				_Dispatcher.BeginInvokeOnMainThread(ReloadTableView);
+			}
 
-                var cell = tableView.DequeueReusableCell (cellIdentifier);
-                if (cell == null) {
-                    cell = new UITableViewCell (UITableViewCellStyle.Default, cellIdentifier);
-                }
+			void ReloadTableView()
+			{
+				TableView.ReloadData();
+				NavigationItem.Title = NSBundle.MainBundle.LocalizedString("Select an Album", "Select an Album");
+			}
 
-                // Get count
-                var g = AssetGroups [indexPath.Row];
-                g.SetAssetsFilter (ALAssetsFilter.AllPhotos);
-                var gCount = g.Count;
-                cell.TextLabel.Text = string.Format ("{0} ({1})", g.Name, gCount);
-                try {
-                    cell.ImageView.Image = new UIImage (g.PosterImage);
-                } catch (Exception e) {
-                    Console.WriteLine ("Failed to set thumbnail {0}", e);
-                }
-                cell.Accessory = UITableViewCellAccessory.DisclosureIndicator;
+			public override nint NumberOfSections(UITableView tableView)
+			{
+				return 1;
+			}
 
-                return cell;
-            }
+			public override nint RowsInSection(UITableView tableview, nint section)
+			{
+				return AssetGroups.Count;
+			}
 
-            public override void RowSelected (UITableView tableView, NSIndexPath indexPath)
-            {
-                var assetGroup = AssetGroups [indexPath.Row];
-                assetGroup.SetAssetsFilter (ALAssetsFilter.AllPhotos);
-                var picker = new ELCAssetTablePicker (assetGroup);
-                picker.Parent = Parent;
-                NavigationController.PushViewController (picker, true);
-            }
+			public override UITableViewCell GetCell(UITableView tableView, NSIndexPath indexPath)
+			{
+				const string cellIdentifier = "Cell";
 
-            public override nfloat GetHeightForRow (UITableView tableView, NSIndexPath indexPath)
-            {
-                return 57;
-            }
-        }
+				var cell = tableView.DequeueReusableCell(cellIdentifier);
+				if (cell == null)
+				{
+					cell = new UITableViewCell(UITableViewCellStyle.Default, cellIdentifier);
+				}
+
+				// Get count
+				var g = AssetGroups[indexPath.Row];
+				g.SetAssetsFilter(ALAssetsFilter.AllPhotos);
+				var gCount = g.Count;
+				cell.TextLabel.Text = string.Format("{0} ({1})", g.Name, gCount);
+				try
+				{
+					cell.ImageView.Image = new UIImage(g.PosterImage);
+				}
+				catch (Exception e)
+				{
+				    Console.WriteLine("{0} {1}",NSBundle.MainBundle.LocalizedString("Failed to set thumbnail", "Failed to set thumbnail"), e);
+				}
+				cell.Accessory = UITableViewCellAccessory.DisclosureIndicator;
+
+				return cell;
+			}
+
+			public override void RowSelected(UITableView tableView, NSIndexPath indexPath)
+			{
+				var assetGroup = AssetGroups[indexPath.Row];
+				assetGroup.SetAssetsFilter(ALAssetsFilter.AllPhotos);
+				var picker = new ELCAssetTablePicker(assetGroup);
+				picker.Parent = Parent;
+
+			this.NavigationItem.BackBarButtonItem = new UIBarButtonItem(NSBundle.MainBundle.LocalizedString("Back", "Back"), UIBarButtonItemStyle.Plain, null);
+
+				NavigationController.PushViewController(picker, true);
+			}
+
+			public override nfloat GetHeightForRow(UITableView tableView, NSIndexPath indexPath)
+			{
+				return 57;
+			}
+		}
 
 
-        class ELCAssetTablePicker : UITableViewController
-        {
-            static readonly NSObject _Dispatcher = new NSObject();
+		class ELCAssetTablePicker : UITableViewController
+		{
+			static readonly NSObject _Dispatcher = new NSObject();
 
-            int Columns = 4;
-            public bool SingleSelection { get; set; }
-            public bool ImmediateReturn { get; set; }
-            readonly ALAssetsGroup AssetGroup;
+			int Columns = 4;
 
-            readonly List<ELCAsset> ElcAssets = new List<ELCAsset> ();
+			public bool SingleSelection { get; set; }
 
-            WeakReference _Parent;
-            public ELCImagePickerViewController Parent {
-                get {
-                    return _Parent == null ? null : _Parent.Target as ELCImagePickerViewController;
-                }
-                set {
-                    _Parent = new WeakReference (value);
-                }
-            }
+			public bool ImmediateReturn { get; set; }
 
-            public ELCAssetTablePicker (ALAssetsGroup assetGroup)
-            {
-                AssetGroup = assetGroup;
-            }
+			readonly ALAssetsGroup AssetGroup;
 
-            public override void ViewDidLoad ()
-            {
-                TableView.SeparatorStyle = UITableViewCellSeparatorStyle.None;
-                TableView.AllowsSelection = false;
+			readonly List<ELCAsset> ElcAssets = new List<ELCAsset>();
 
-                if (ImmediateReturn) {
+			WeakReference _Parent;
 
-                } else {
-                    var doneButtonItem = new UIBarButtonItem (UIBarButtonSystemItem.Done);
-                    doneButtonItem.Clicked += DoneClicked;
-                    NavigationItem.RightBarButtonItem = doneButtonItem;
-				    NavigationItem.Title = "Loading...";
-                }
+			public ELCImagePickerViewController Parent
+			{
+				get
+				{
+					return _Parent == null ? null : _Parent.Target as ELCImagePickerViewController;
+				}
+				set
+				{
+					_Parent = new WeakReference(value);
+				}
+			}
 
-                Task.Run ((Action)PreparePhotos);
-            }
+			public ELCAssetTablePicker(ALAssetsGroup assetGroup)
+			{
+				AssetGroup = assetGroup;
+			}
 
-            public override void ViewWillAppear (bool animated)
-            {
-                base.ViewWillAppear (animated);
-                Columns = (int)(View.Bounds.Size.Width / 80f);
-            }
+			public override void ViewDidLoad()
+			{
+				TableView.SeparatorStyle = UITableViewCellSeparatorStyle.None;
+				TableView.AllowsSelection = false;
 
-            public override void ViewDidDisappear (bool animated)
-            {
-                base.ViewDidDisappear (animated);
-                if (IsMovingFromParentViewController || IsBeingDismissed) {
-                    NavigationItem.RightBarButtonItem.Clicked -= DoneClicked;
-                }
-            }
+				if (ImmediateReturn)
+				{
 
-            public override void DidRotate (UIInterfaceOrientation fromInterfaceOrientation)
-            {
-                base.DidRotate (fromInterfaceOrientation);
-                Columns = (int)(View.Bounds.Size.Width / 80f);
-                TableView.ReloadData ();
-            }
+				}
+				else
+				{
+					var doneButtonItem = new UIBarButtonItem(UIBarButtonSystemItem.Done);
+					doneButtonItem.Clicked += DoneClicked;
+					NavigationItem.RightBarButtonItem = doneButtonItem;
+					NavigationItem.Title = NSBundle.MainBundle.LocalizedString("Loading", "Loading...");
+				}
 
-            void PreparePhotos ()
-            {
-                AssetGroup.Enumerate (PhotoEnumerator);
+				Task.Run((Action)PreparePhotos);
+			}
 
-                _Dispatcher.BeginInvokeOnMainThread (() => {
-                    TableView.ReloadData ();
-                    // scroll to bottom
-                    var section = NumberOfSections (TableView) - 1;
-                    var row = TableView.NumberOfRowsInSection (section) - 1;
-                    if (section >= 0 && row >= 0) {
-                        var ip = NSIndexPath.FromRowSection (row, section);
-                        TableView.ScrollToRow (ip, UITableViewScrollPosition.Bottom, false);
-                    }
-				NavigationItem.Title = SingleSelection ? "Pick Photo" : "Pick Photos";
-                });
-            }
+			public override void ViewWillAppear(bool animated)
+			{
+				base.ViewWillAppear(animated);
+				Columns = (int)(View.Bounds.Size.Width / 80f);
+			}
 
-            void PhotoEnumerator (ALAsset result, nint index, ref bool stop)
-            {
-                if (result == null) {
-                    return;
-                }
+			public override void ViewDidDisappear(bool animated)
+			{
+				base.ViewDidDisappear(animated);
+				if (IsMovingFromParentViewController || IsBeingDismissed)
+				{
+					NavigationItem.RightBarButtonItem.Clicked -= DoneClicked;
+				}
+			}
 
-                ELCAsset elcAsset = new ELCAsset (this, result);
+			public override void DidRotate(UIInterfaceOrientation fromInterfaceOrientation)
+			{
+				base.DidRotate(fromInterfaceOrientation);
+				Columns = (int)(View.Bounds.Size.Width / 80f);
+				TableView.ReloadData();
+			}
 
-                bool isAssetFiltered = false;
-                /*if (self.assetPickerFilterDelegate &&
+			void PreparePhotos()
+			{
+				AssetGroup.Enumerate(PhotoEnumerator);
+
+				_Dispatcher.BeginInvokeOnMainThread(() =>
+				{
+					TableView.ReloadData();
+					// scroll to bottom
+					var section = NumberOfSections(TableView) - 1;
+					var row = TableView.NumberOfRowsInSection(section) - 1;
+					if (section >= 0 && row >= 0)
+					{
+						var ip = NSIndexPath.FromRowSection(row, section);
+						TableView.ScrollToRow(ip, UITableViewScrollPosition.Bottom, false);
+					}
+				    
+					NavigationItem.Title = SingleSelection ? NSBundle.MainBundle.LocalizedString("Pick Photo", "Pick Photo") : NSBundle.MainBundle.LocalizedString("Pick Photos", "Pick Photos");
+				});
+			}
+
+			void PhotoEnumerator(ALAsset result, nint index, ref bool stop)
+			{
+				if (result == null)
+				{
+					return;
+				}
+
+				ELCAsset elcAsset = new ELCAsset(this, result);
+
+				bool isAssetFiltered = false;
+				/*if (self.assetPickerFilterDelegate &&
                     [self.assetPickerFilterDelegate respondsToSelector:@selector(assetTablePicker:isAssetFilteredOut:)])
                 {
                     isAssetFiltered = [self.assetPickerFilterDelegate assetTablePicker:self isAssetFilteredOut:(ELCAsset*)elcAsset];
                 }*/
 
-                if (result.DefaultRepresentation == null)
-                    isAssetFiltered = true;
+				if (result.DefaultRepresentation == null)
+					isAssetFiltered = true;
 
-                if (!isAssetFiltered) {
-                    ElcAssets.Add (elcAsset);
-                }
-            }
+				if (!isAssetFiltered)
+				{
+					ElcAssets.Add(elcAsset);
+				}
+			}
 
-            void DoneClicked (object sender = null, EventArgs e = null)
-            {
-                var selected = new List<ALAsset> ();
+			void DoneClicked(object sender = null, EventArgs e = null)
+			{
+				var selected = new List<ALAsset>();
 
-                foreach (var asset in ElcAssets) {
-                    if (asset.Selected) {
-                        selected.Add (asset.Asset);
-                    }
-                }
+				foreach (var asset in ElcAssets)
+				{
+					if (asset.Selected)
+					{
+						selected.Add(asset.Asset);
+					}
+				}
 
-                var parent = Parent;
-                if (parent != null) {
-                    parent.SelectedAssets (selected);
-                }
-            }
+				var parent = Parent;
+				if (parent != null)
+				{
+					parent.SelectedAssets(selected);
+				}
+			}
 
-            bool ShouldSelectAsset (ELCAsset asset)
-            {
-                int selectionCount = TotalSelectedAssets;
-                bool shouldSelect = true;
+			bool ShouldSelectAsset(ELCAsset asset)
+			{
+				int selectionCount = TotalSelectedAssets;
+				bool shouldSelect = true;
 
-                var parent = Parent;
-                if (parent != null) {
-                    shouldSelect = parent.ShouldSelectAsset (asset.Asset, selectionCount);
-                }
+				var parent = Parent;
+				if (parent != null)
+				{
+					shouldSelect = parent.ShouldSelectAsset(asset.Asset, selectionCount);
+				}
 
-                return shouldSelect;
-            }
+				return shouldSelect;
+			}
 
-            void AssetSelected (ELCAsset asset, bool selected)
-            {
-                TotalSelectedAssets += (selected) ? 1 : -1;
+			void AssetSelected(ELCAsset asset, bool selected)
+			{
+				TotalSelectedAssets += (selected) ? 1 : -1;
 
-                if (SingleSelection) {
-                    foreach (var elcAsset in ElcAssets) {
-                        if (asset != elcAsset) {
-                            elcAsset.Selected = false;
-                        }
-                    }
-                }
-                if (ImmediateReturn) {
-                    var parent = Parent;
-                    var obj = new List<ALAsset> (1);
-                    obj.Add (asset.Asset);
-                    parent.SelectedAssets (obj);
-                }
-            }
+				if (SingleSelection)
+				{
+					foreach (var elcAsset in ElcAssets)
+					{
+						if (asset != elcAsset)
+						{
+							elcAsset.Selected = false;
+						}
+					}
+				}
+				if (ImmediateReturn)
+				{
+					var parent = Parent;
+					var obj = new List<ALAsset>(1);
+					obj.Add(asset.Asset);
+					parent.SelectedAssets(obj);
+				}
+			}
 
-            public override nint NumberOfSections (UITableView tableView)
-            {
-                return 1;
-            }
+			public override nint NumberOfSections(UITableView tableView)
+			{
+				return 1;
+			}
 
-            public override nint RowsInSection (UITableView tableview, nint section)
-            {
-                if (Columns <= 0)
-                    return 4;
-                int numRows = (int)Math.Ceiling ((float)ElcAssets.Count / Columns);
-                return numRows;
-            }
+			public override nint RowsInSection(UITableView tableview, nint section)
+			{
+				if (Columns <= 0)
+					return 4;
+				int numRows = (int)Math.Ceiling((float)ElcAssets.Count / Columns);
+				return numRows;
+			}
 
-            List<ELCAsset> AssetsForIndexPath (NSIndexPath path)
-            {
-                int index = path.Row * Columns;
-                int length = Math.Min (Columns, ElcAssets.Count - index);
-                return ElcAssets.GetRange (index, length);
-            }
+			List<ELCAsset> AssetsForIndexPath(NSIndexPath path)
+			{
+				int index = path.Row * Columns;
+				int length = Math.Min(Columns, ElcAssets.Count - index);
+				return ElcAssets.GetRange(index, length);
+			}
 
-            public override UITableViewCell GetCell (UITableView tableView, NSIndexPath indexPath)
-            {
-                const string cellIdentifier = "Cell";
+			public override UITableViewCell GetCell(UITableView tableView, NSIndexPath indexPath)
+			{
+				const string cellIdentifier = "Cell";
 
-                var cell = TableView.DequeueReusableCell (cellIdentifier) as ELCAssetCell;
-                if (cell == null) {
-                    cell = new ELCAssetCell (UITableViewCellStyle.Default, cellIdentifier);
-                }
-                cell.SetAssets (AssetsForIndexPath (indexPath), Columns);
-                return cell;
-            }
+				var cell = TableView.DequeueReusableCell(cellIdentifier) as ELCAssetCell;
+				if (cell == null)
+				{
+					cell = new ELCAssetCell(UITableViewCellStyle.Default, cellIdentifier);
+				}
+				cell.SetAssets(AssetsForIndexPath(indexPath), Columns);
+				return cell;
+			}
 
-            public override nfloat GetHeightForRow (UITableView tableView, NSIndexPath indexPath)
-            {
-                return 79;
-            }
+			public override nfloat GetHeightForRow(UITableView tableView, NSIndexPath indexPath)
+			{
+				return 79;
+			}
 
-            public int TotalSelectedAssets;
+			public int TotalSelectedAssets;
 
-            public class ELCAsset
-            {
-                public readonly ALAsset Asset;
-                readonly WeakReference _Parent;
+			public class ELCAsset
+			{
+				public readonly ALAsset Asset;
+				readonly WeakReference _Parent;
 
-                bool _Selected;
+				bool _Selected;
 
-                public ELCAsset (ELCAssetTablePicker parent, ALAsset asset)
-                {
-                    _Parent = new WeakReference (parent);
-                    Asset = asset;
-                }
+				public ELCAsset(ELCAssetTablePicker parent, ALAsset asset)
+				{
+					_Parent = new WeakReference(parent);
+					Asset = asset;
+				}
 
-                public void ToggleSelected ()
-                {
-                    Selected = !Selected;
-                }
+				public void ToggleSelected()
+				{
+					Selected = !Selected;
+				}
 
-                public bool Selected { 
-                    get { 
-                        return _Selected;
-                    }
+				public bool Selected
+				{ 
+					get
+					{ 
+						return _Selected;
+					}
 
-                    set {
-                        var parent = _Parent.Target as ELCAssetTablePicker;
-                        if (value && parent != null && !parent.ShouldSelectAsset (this)) {
-                            return;
-                        }
+					set
+					{
+						var parent = _Parent.Target as ELCAssetTablePicker;
+						if (value && parent != null && !parent.ShouldSelectAsset(this))
+						{
+							return;
+						}
 
-                        _Selected = value;
+						_Selected = value;
 
-                        if (parent != null) {
-                            parent.AssetSelected (this, value);
-                        }
-                    }
-                }
-            }
+						if (parent != null)
+						{
+							parent.AssetSelected(this, value);
+						}
+					}
+				}
+			}
 
-            class ELCAssetCell : UITableViewCell
-            {
-                List<ELCAsset> RowAssets;
-                int Columns;
-                readonly List<UIImageView> ImageViewArray = new List<UIImageView> ();
-                readonly List<UIImageView> OverlayViewArray = new List<UIImageView> ();
+			class ELCAssetCell : UITableViewCell
+			{
+				List<ELCAsset> RowAssets;
+				int Columns;
+				readonly List<UIImageView> ImageViewArray = new List<UIImageView>();
+				readonly List<UIImageView> OverlayViewArray = new List<UIImageView>();
 
-                public ELCAssetCell (UITableViewCellStyle style, string reuseIdentifier) : base (style, reuseIdentifier)
-                {
-                    UITapGestureRecognizer tapRecognizer = new UITapGestureRecognizer (CellTapped);
-                    AddGestureRecognizer (tapRecognizer);
+				public ELCAssetCell(UITableViewCellStyle style, string reuseIdentifier) : base(style, reuseIdentifier)
+				{
+					UITapGestureRecognizer tapRecognizer = new UITapGestureRecognizer(CellTapped);
+					AddGestureRecognizer(tapRecognizer);
 
-                }
+				}
 
-                public void SetAssets (List<ELCAsset> assets, int columns)
-                {
-                    RowAssets = assets;
-                    Columns = columns;
+				public void SetAssets(List<ELCAsset> assets, int columns)
+				{
+					RowAssets = assets;
+					Columns = columns;
 
-                    foreach (var view in ImageViewArray) {
-                        view.RemoveFromSuperview ();
-                    }
-                    foreach (var view in OverlayViewArray) {
-                        view.RemoveFromSuperview ();
-                    }
+					foreach (var view in ImageViewArray)
+					{
+						view.RemoveFromSuperview();
+					}
+					foreach (var view in OverlayViewArray)
+					{
+						view.RemoveFromSuperview();
+					}
 
-                    UIImage overlayImage = null;
-                    for (int i = 0; i < RowAssets.Count; i++) {
-                        var asset = RowAssets [i];
+					UIImage overlayImage = null;
+					for (int i = 0; i < RowAssets.Count; i++)
+					{
+						var asset = RowAssets[i];
 
-                        if (i < ImageViewArray.Count) {
-                            var imageView = ImageViewArray [i];
-                            imageView.Image = new UIImage (asset.Asset.Thumbnail);
-                        } else {
-                            var imageView = new UIImageView (new UIImage (asset.Asset.Thumbnail));
-                            ImageViewArray.Add (imageView);
-                        }
+						if (i < ImageViewArray.Count)
+						{
+							var imageView = ImageViewArray[i];
+							imageView.Image = new UIImage(asset.Asset.Thumbnail);
+						}
+						else
+						{
+							var imageView = new UIImageView(new UIImage(asset.Asset.Thumbnail));
+							ImageViewArray.Add(imageView);
+						}
 
-                        if (i < OverlayViewArray.Count) {
-                            var overlayView = OverlayViewArray [i];
-                            overlayView.Hidden = !asset.Selected;
-                        } else {
-                            if (overlayImage == null) {
-							     overlayImage = UIImage.FromBundle("overlay.png");
-                            }
-                            var overlayView = new UIImageView (overlayImage);
-                            OverlayViewArray.Add (overlayView);
-                            overlayView.Hidden = !asset.Selected;
-                        }
-                    }
-                }
+						if (i < OverlayViewArray.Count)
+						{
+							var overlayView = OverlayViewArray[i];
+							overlayView.Hidden = !asset.Selected;
+						}
+						else
+						{
+							if (overlayImage == null)
+							{
+								overlayImage = UIImage.FromBundle("overlay.png");
+							}
+							var overlayView = new UIImageView(overlayImage);
+							OverlayViewArray.Add(overlayView);
+							overlayView.Hidden = !asset.Selected;
+						}
+					}
+				}
 
-                void CellTapped (UITapGestureRecognizer tapRecognizer)
-                {
-                    var point = tapRecognizer.LocationInView (this);
-                    var totalWidth = Columns * 75 + (Columns - 1) * 4;
-                    var startX = (Bounds.Size.Width - totalWidth) / 2;
+				void CellTapped(UITapGestureRecognizer tapRecognizer)
+				{
+					var point = tapRecognizer.LocationInView(this);
+					var totalWidth = Columns * 75 + (Columns - 1) * 4;
+					var startX = (Bounds.Size.Width - totalWidth) / 2;
 
-                    var frame = new CGRect (startX, 2, 75, 75);
-                    for (int i = 0; i < RowAssets.Count; ++i) {
-                        if (frame.Contains (point)) {
-                            ELCAsset asset = RowAssets [i];
-                            asset.Selected = !asset.Selected;
-                            var overlayView = OverlayViewArray [i];
-                            overlayView.Hidden = !asset.Selected;
-                            break;
-                        }
-                        var x = frame.X + frame.Width + 4;
-					frame = new CGRect (x, frame.Y, frame.Width, frame.Height);
-                    }
-                }
+					var frame = new CGRect(startX, 2, 75, 75);
+					for (int i = 0; i < RowAssets.Count; ++i)
+					{
+						if (frame.Contains(point))
+						{
+							ELCAsset asset = RowAssets[i];
+							asset.Selected = !asset.Selected;
+							var overlayView = OverlayViewArray[i];
+							overlayView.Hidden = !asset.Selected;
+							break;
+						}
+						var x = frame.X + frame.Width + 4;
+						frame = new CGRect(x, frame.Y, frame.Width, frame.Height);
+					}
+				}
 
-                public override void LayoutSubviews ()
-                {
-                    var totalWidth = Columns * 75 + (Columns - 1) * 4;
-                    var startX = (Bounds.Size.Width - totalWidth) / 2;
+				public override void LayoutSubviews()
+				{
+					var totalWidth = Columns * 75 + (Columns - 1) * 4;
+					var startX = (Bounds.Size.Width - totalWidth) / 2;
 
-				var frame = new CGRect (startX, 2, 75, 75);
+					var frame = new CGRect(startX, 2, 75, 75);
 
-                    int i = 0;
-                    foreach (var imageView in ImageViewArray) {
-                        imageView.Frame = frame;
-                        AddSubview (imageView);
+					int i = 0;
+					foreach (var imageView in ImageViewArray)
+					{
+						imageView.Frame = frame;
+						AddSubview(imageView);
 
-                        var overlayView = OverlayViewArray [i++];
-                        overlayView.Frame = frame;
-                        AddSubview (overlayView);
+						var overlayView = OverlayViewArray[i++];
+						overlayView.Frame = frame;
+						AddSubview(overlayView);
 
-                        var x = frame.X + frame.Width + 4;
-					frame = new CGRect (x, frame.Y, frame.Width, frame.Height);
-                    }
-                }
-            }
-        }
-    }
+						var x = frame.X + frame.Width + 4;
+						frame = new CGRect(x, frame.Y, frame.Width, frame.Height);
+					}
+				}
+			}
+		}
+	}
 }
