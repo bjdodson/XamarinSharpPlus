@@ -4,6 +4,7 @@ using System.Collections.Generic;
 
 using Foundation;
 using UIKit;
+using ELCImagePicker;
 
 namespace ELCImagePickerSample
 {
@@ -20,7 +21,13 @@ namespace ELCImagePickerSample
 			get;
 			set;
 		}
-		
+		public override bool FinishedLaunching (UIApplication application, NSDictionary launchOptions)
+		{
+			ELCImagePickerViewController.OverlayImage = UIImage.FromBundle ("overlay-black");
+
+			return true;
+			
+		}
 		// This method is invoked when the application is about to move from active to inactive state.
 		// OpenGL applications should use this method to pause.
 		public override void OnResignActivation(UIApplication application)

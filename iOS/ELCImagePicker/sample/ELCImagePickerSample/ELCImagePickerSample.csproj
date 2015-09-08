@@ -126,5 +126,7 @@
   </ItemGroup>
   <ItemGroup>
     <BundleResource Include="Resources\en.lproj\Localizable.strings" />
+    <BundleResource Include="Resources\overlay-black.png" />
+    <BundleResource Include="Resources\overlay-black%402x.png" />
   </ItemGroup>
 </Project>
