@@ -28,6 +28,11 @@ The `AssetResult` class has three properties
  
 You can use these to access the UIImage for the selected images and also the name and Asset Library path, for loading it later.
   
+**Customisation**
+
+You can now override the default overlay image by setting the static `OverlayImage` property on the `ELCImagePickerViewController` class.  
+
+
 **Localisation**
 
 Most of the labels and strings support localisation.  The sample provides an english string file to use as the basis for implementing other languages.
