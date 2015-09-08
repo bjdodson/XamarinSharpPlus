@@ -43,7 +43,7 @@
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\iOS\Xamarin.iOS.CSharp.targets" />
   <ItemGroup>
-    <BundleResource Include="Resources\overlay.png" />
-    <BundleResource Include="Resources\overlay%402x.png" />
+    <BundleResource Include="Resources\overlay-image%402x.png" />
+    <BundleResource Include="Resources\overlay-image.png" />
   </ItemGroup>
 </Project>
