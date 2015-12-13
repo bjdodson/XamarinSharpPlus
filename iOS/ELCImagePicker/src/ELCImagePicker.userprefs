@@ -2,7 +2,7 @@
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" PreferredExecutionTarget="MonoDevelop.IPhone.IPhoneDeviceTarget" />
   <MonoDevelop.Ide.Workbench ActiveDocument="ELCImagePicker/ELCImagePickerViewController.cs">
     <Files>
-      <File FileName="ELCImagePicker/ELCImagePickerViewController.cs" Line="60" Column="8" />
+      <File FileName="ELCImagePicker/ELCImagePickerViewController.cs" Line="60" Column="3" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>

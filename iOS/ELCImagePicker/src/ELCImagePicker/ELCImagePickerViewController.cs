@@ -58,6 +58,7 @@ namespace ELCImagePicker
      */
 	public class ELCImagePickerViewController : UINavigationController
 	{
+	
 
 	    private static Lazy<UIImage> mDefaultOverlayImage = new Lazy<UIImage> (() => UIImage.FromBundle ("overlay-image"));
 
@@ -124,7 +125,11 @@ namespace ELCImagePicker
 					var result = new AssetResult ();
 					UIImageOrientation orientation = UIImageOrientation.Up;
 					var cgImage = rep.GetFullScreenImage ();
+
+				//set if not null
+				if (cgImage != null)					
 					result.Image = new UIImage (cgImage, 1.0f, orientation);
+				
 					result.Name = rep.Filename;
 					result.Path = rep.Url.AbsoluteString;
 
@@ -552,18 +557,29 @@ namespace ELCImagePicker
 						view.RemoveFromSuperview ();
 					}
 
-					UIImage overlayImage = null;
+					//UIImage overlayImage = null;
 					for (int i = 0; i < RowAssets.Count; i++) {
 						var asset = RowAssets [i];
 
-						if (i < ImageViewArray.Count) {
-							var imageView = ImageViewArray [i];
-							imageView.Image = new UIImage (asset.Asset.Thumbnail);
-						} else {
-							var imageView = new UIImageView (new UIImage (asset.Asset.Thumbnail));
-							ImageViewArray.Add (imageView);
-						}
+						try {
 
+							if (asset.Asset != null 
+							    && asset.Asset.Thumbnail != null)
+							{
+								if (i < ImageViewArray.Count) 
+								{
+									var imageView = ImageViewArray [i];
+									imageView.Image = new UIImage (asset.Asset.Thumbnail);
+								} else {
+									var imageView = new UIImageView (new UIImage (asset.Asset.Thumbnail));
+									ImageViewArray.Add (imageView);
+								}
+							}
+
+						} catch (Exception e) {
+							Console.WriteLine ("{0} {1}", NSBundle.MainBundle.LocalizedString ("Failed to set thumbnail", "Failed to set thumbnail"), e);
+						}
+						
 						if (i < OverlayViewArray.Count) {
 							var overlayView = OverlayViewArray [i];
 							overlayView.Hidden = !asset.Selected;
