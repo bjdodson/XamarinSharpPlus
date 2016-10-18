@@ -21,7 +21,7 @@ namespace ELCImagePickerSample
 		/// Initializes a new instance of the <see cref="ELCImagePickerSample.ELImagePickerDemoViewController"/> class.
 		/// </summary>
 		/// <param name="handle">Handle.</param>
-		public ELImagePickerDemoViewController (IntPtr handle) : base (handle)
+		public ELImagePickerDemoViewController(IntPtr handle) : base(handle)
 		{
 			this.Title = "ELCImagePicker Demo";
 		}
@@ -32,28 +32,34 @@ namespace ELCImagePickerSample
 		{
 			base.ViewDidLoad();
 
-			var aButton = new UIBarButtonItem(UIBarButtonSystemItem.Add,(s,e)=>
+			var aButton = new UIBarButtonItem(UIBarButtonSystemItem.Add, (s, e) =>
 			{
 
 				//create a new instance of the picker view controller
-				var picker = ELCImagePickerViewController.Instance;
+				//var picker = ELCImagePickerViewController.Instance;
+				var picker = ELCImagePickerViewController.GetInstance("Choisir un album", "Choisir Photo", "Retour", "choix Photo");
 
+
+
+
+				//picker.InitCustomLabel();
 				//set the maximum number of images that can be selected
 				picker.MaximumImagesCount = 15;
 
 				//setup the handling of completion once the items have been picked or the picker has been cancelled
-				picker.Completion.ContinueWith (t =>
+				picker.Completion.ContinueWith(t =>
 				{
 					//execute any UI code on the UI thread
-					this.BeginInvokeOnMainThread(()=>
+					this.BeginInvokeOnMainThread(() =>
 					{
 						//dismiss the picker
-						picker.DismissViewController(true,null);
+						picker.DismissViewController(true, null);
 
-						if (t.IsCanceled || t.Exception != null) 
+						if (t.IsCanceled || t.Exception != null)
 						{
 							//cancelled or error
-						} else 
+						}
+						else
 						{
 							//get the selected items
 							var items = t.Result as List<AssetResult>;
@@ -70,7 +76,7 @@ namespace ELCImagePickerSample
 				});
 
 
-				this.PresentViewController (picker, true, null);
+				this.PresentViewController(picker, true, null);
 
 			});
 
@@ -78,23 +84,24 @@ namespace ELCImagePickerSample
 			this.NavigationItem.RightBarButtonItem = aButton;
 		}
 
-		public override nint NumberOfSections (UITableView tableView)
+		public override nint NumberOfSections(UITableView tableView)
 		{
 			return 1;
 		}
 
-		public override nint RowsInSection (UITableView tableview, nint section)
+		public override nint RowsInSection(UITableView tableview, nint section)
 		{
 			return mResults.Count;
 		}
 
-		public override UITableViewCell GetCell (UITableView tableView, NSIndexPath indexPath)
+		public override UITableViewCell GetCell(UITableView tableView, NSIndexPath indexPath)
 		{
 			const string cellIdentifier = "Cell";
 
-			var cell = tableView.DequeueReusableCell (cellIdentifier);
-			if (cell == null) {
-				cell = new UITableViewCell (UITableViewCellStyle.Default, cellIdentifier);
+			var cell = tableView.DequeueReusableCell(cellIdentifier);
+			if (cell == null)
+			{
+				cell = new UITableViewCell(UITableViewCellStyle.Default, cellIdentifier);
 			}
 
 			var asset = mResults[indexPath.Row];
@@ -105,12 +112,12 @@ namespace ELCImagePickerSample
 			return cell;
 		}
 
-		public override void RowSelected (UITableView tableView, NSIndexPath indexPath)
+		public override void RowSelected(UITableView tableView, NSIndexPath indexPath)
 		{
 			var asset = mResults[indexPath.Row];
 		}
 
-		public override nfloat GetHeightForRow (UITableView tableView, NSIndexPath indexPath)
+		public override nfloat GetHeightForRow(UITableView tableView, NSIndexPath indexPath)
 		{
 			return 100;
 		}
