@@ -36,15 +36,14 @@ namespace ELCImagePickerSample
 			{
 
 				//create a new instance of the picker view controller
-				//var picker = ELCImagePickerViewController.Instance;
-				var picker = ELCImagePickerViewController.GetInstance("Choisir un album", "Choisir Photo", "Retour", "choix Photo");
+				var picker = ELCImagePickerViewController.Create(15);
 
-
-
+				//Provide custom labels for the picker
+				//var picker = ELCImagePickerViewController.Create(4, "Choisir un album", "Choisir Photo", "Retour", "choix Photo");
 
 				//picker.InitCustomLabel();
 				//set the maximum number of images that can be selected
-				picker.MaximumImagesCount = 15;
+				//picker.MaximumImagesCount = 15;
 
 				//setup the handling of completion once the items have been picked or the picker has been cancelled
 				picker.Completion.ContinueWith(t =>

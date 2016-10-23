@@ -102,6 +102,7 @@ namespace ELCImagePicker
 			}
 		}
 
+		[Obsolete("Use Create() instead")]
 		//static ELCAlbumPickerController albumPicker
 		public static ELCImagePickerViewController Instance
 		{
@@ -117,21 +118,31 @@ namespace ELCImagePicker
 			}
 		}
 
-		public static ELCImagePickerViewController GetInstance(string selectAlbum, string customPickPhotosTitle = "", string customBackBattonTitle = "", string customPickPhotoTitle = "", string customDoneButtonTitle = "", string customLoadingtitle = "")
+		/// <summary>
+		/// Create a new instance of the Picker
+		/// </summary>
+		/// <param name="maxImages">Max images.</param>
+		/// <param name="selectAlbumTitle">Select album title.</param>
+		/// <param name="pickPhotosTitle">Pick photos title.</param>
+		/// <param name="backBattonTitle">Back batton title.</param>
+		/// <param name="pickPhotoTitle">Pick photo title.</param>
+		/// <param name="doneButtonTitle">Done button title.</param>
+		/// <param name="loadingtitle">Loadingtitle.</param>
+		public static ELCImagePickerViewController Create(int maxImages = 4, string selectAlbumTitle = null, string pickPhotosTitle = null, string backBattonTitle = null, string pickPhotoTitle = null, string doneButtonTitle = null, string loadingtitle = null)
 		{
 			var albumPicker = new ELCAlbumPickerController()
 			{
-				CustomSelectAlBumTitle = selectAlbum,
-				CustomBackButtonTitle = customBackBattonTitle,
-				CustomDoneButtonTitle = customDoneButtonTitle,
-				CustomLoadingTitle = customLoadingtitle,
-				CustomPickPhotosTitle = customPickPhotosTitle,
-				CustomPickPhotoTitle = customPickPhotoTitle
+				SelectAlbumTitle = selectAlbumTitle,
+				BackButtonTitle = backBattonTitle,
+				DoneButtonTitle = doneButtonTitle,
+				LoadingTitle = loadingtitle,
+				PickPhotosTitle = pickPhotosTitle,
+				PickPhotoTitle = pickPhotoTitle,
 			};
 
 			var picker = new ELCImagePickerViewController(albumPicker);
 			albumPicker.Parent = picker;
-			picker.MaximumImagesCount = 4;
+			picker.MaximumImagesCount = maxImages;
 			return picker;
 
 		}
@@ -199,13 +210,12 @@ namespace ELCImagePicker
 
 		public class ELCAlbumPickerController : UITableViewController
 		{
-			public string CustomBackButtonTitle;
-			public string CustomSelectAlBumTitle;
-			public string CustomLoadingTitle;
-
-			public string CustomDoneButtonTitle;
-			public string CustomPickPhotoTitle;
-			public string CustomPickPhotosTitle;
+			public string DoneButtonTitle { get; set; }	
+			public string BackButtonTitle { get; set; }
+			public string SelectAlbumTitle { get; set; }
+			public string LoadingTitle { get; set; }
+			public string PickPhotoTitle { get; set; }
+			public string PickPhotosTitle { get; set; }
 
 			static readonly NSObject _Dispatcher = new NSObject();
 			readonly List<ALAssetsGroup> AssetGroups = new List<ALAssetsGroup>();
@@ -233,7 +243,7 @@ namespace ELCImagePicker
 			public override void ViewDidLoad()
 			{
 				base.ViewDidLoad();
-				string loading = string.IsNullOrWhiteSpace(CustomLoadingTitle) ? NSBundle.MainBundle.LocalizedString("Loading", "Loading...") : CustomLoadingTitle;
+				string loading = string.IsNullOrWhiteSpace(LoadingTitle) ? NSBundle.MainBundle.LocalizedString("Loading", "Loading...") : LoadingTitle;
 
 				NavigationItem.Title = loading;
 				var cancelButton = new UIBarButtonItem(UIBarButtonSystemItem.Cancel);
@@ -292,7 +302,7 @@ namespace ELCImagePicker
 			void ReloadTableView()
 			{
 				TableView.ReloadData();
-				string selectAlbum = string.IsNullOrWhiteSpace(CustomSelectAlBumTitle) ? NSBundle.MainBundle.LocalizedString("Select an Album", "Select an Album") : CustomSelectAlBumTitle;
+				string selectAlbum = string.IsNullOrWhiteSpace(SelectAlbumTitle) ? NSBundle.MainBundle.LocalizedString("Select an Album", "Select an Album") : SelectAlbumTitle;
 				NavigationItem.Title = selectAlbum;
 			}
 
@@ -340,14 +350,14 @@ namespace ELCImagePicker
 				assetGroup.SetAssetsFilter(ALAssetsFilter.AllPhotos);
 				var picker = new ELCAssetTablePicker(assetGroup);
 
-				picker.CustomLoadingTitle = CustomLoadingTitle;
-				picker.CustomPickPhotosTitle = CustomPickPhotosTitle;
-				picker.CustomPickPhotoTitle = CustomPickPhotoTitle;
-				picker.CustomDoneButtonTitle = CustomDoneButtonTitle;
+				picker.LoadingTitle = LoadingTitle;
+				picker.PickPhotosTitle = PickPhotosTitle;
+				picker.PickPhotoTitle = PickPhotoTitle;
+				picker.DoneButtonTitle = DoneButtonTitle;
 
 				picker.Parent = Parent;
 
-				string backButtonTitle = string.IsNullOrWhiteSpace(CustomBackButtonTitle) ? NSBundle.MainBundle.LocalizedString("Back", "Back") : CustomBackButtonTitle;
+				string backButtonTitle = string.IsNullOrWhiteSpace(BackButtonTitle) ? NSBundle.MainBundle.LocalizedString("Back", "Back") : BackButtonTitle;
 
 				this.NavigationItem.BackBarButtonItem = new UIBarButtonItem(backButtonTitle, UIBarButtonItemStyle.Plain, null);
 
@@ -363,10 +373,58 @@ namespace ELCImagePicker
 
 		class ELCAssetTablePicker : UITableViewController
 		{
-			public string CustomDoneButtonTitle;
-			public string CustomPickPhotoTitle;
-			public string CustomPickPhotosTitle;
-			public string CustomLoadingTitle;
+			private string doneButtonTitle { get; set; }
+			private string pickPhotoTitle { get; set; }
+			private string pickPhotosTitle { get; set; }
+			private string loadingTitle { get; set; }
+
+			public string DoneButtonTitle
+			{
+				get
+				{
+					if (string.IsNullOrWhiteSpace(doneButtonTitle))
+						return NSBundle.MainBundle.LocalizedString("Done", "Done");
+
+					return doneButtonTitle;
+				}
+				set { doneButtonTitle = value; }
+			}
+
+			public string PickPhotoTitle
+			{
+				get
+				{
+					if (string.IsNullOrWhiteSpace(pickPhotoTitle))
+						return NSBundle.MainBundle.LocalizedString("Pick Photo", "Pick Photo");
+
+					return pickPhotoTitle;
+				}
+				set { pickPhotoTitle = value; }
+			}
+
+			public string PickPhotosTitle
+			{
+				get
+				{
+					if (string.IsNullOrWhiteSpace(pickPhotosTitle))
+						return NSBundle.MainBundle.LocalizedString("Pick Photos", "Pick Photos");
+
+					return pickPhotosTitle;
+				}
+				set { pickPhotosTitle = value; }
+			}
+
+			public string LoadingTitle
+			{
+				get
+				{
+					if (string.IsNullOrWhiteSpace(loadingTitle))
+						return NSBundle.MainBundle.LocalizedString("Loading", "Loading...");
+
+					return loadingTitle;
+				}
+				set { loadingTitle = value; }
+			}
 
 			static readonly NSObject _Dispatcher = new NSObject();
 
@@ -410,13 +468,10 @@ namespace ELCImagePicker
 				}
 				else
 				{
-					string applied = string.IsNullOrWhiteSpace(CustomDoneButtonTitle) ? NSBundle.MainBundle.LocalizedString("Done", "Done") : CustomDoneButtonTitle;
-					string loading = string.IsNullOrWhiteSpace(CustomLoadingTitle) ? NSBundle.MainBundle.LocalizedString("Loading", "Loading...") : CustomLoadingTitle;
-
-					var doneButtonItem = new UIBarButtonItem(applied, UIBarButtonItemStyle.Done, null);
+					var doneButtonItem = new UIBarButtonItem(DoneButtonTitle, UIBarButtonItemStyle.Done, null);
 					doneButtonItem.Clicked += DoneClicked;
 					NavigationItem.RightBarButtonItem = doneButtonItem;
-					NavigationItem.Title = loading;
+					NavigationItem.Title = LoadingTitle;
 				}
 
 				Task.Run((Action)PreparePhotos);
@@ -460,10 +515,8 @@ namespace ELCImagePicker
 						TableView.ScrollToRow(ip, UITableViewScrollPosition.Bottom, false);
 					}
 
-					string pickphoto = string.IsNullOrWhiteSpace(CustomPickPhotoTitle) ? NSBundle.MainBundle.LocalizedString("Pick Photo", "Pick Photo") : CustomPickPhotoTitle;
-					string pickPhotos = string.IsNullOrWhiteSpace(CustomPickPhotosTitle) ? NSBundle.MainBundle.LocalizedString("Pick Photo", "Pick Photo") : CustomPickPhotosTitle;
 
-					NavigationItem.Title = SingleSelection ? pickphoto : pickPhotos;
+					NavigationItem.Title = SingleSelection ? PickPhotoTitle : PickPhotosTitle;
 				});
 			}
 
