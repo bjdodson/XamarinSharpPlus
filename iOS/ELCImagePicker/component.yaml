@@ -1,0 +1,29 @@
+%YAML 1.2
+---
+build: 
+  - path: src/ELCImagePicker.sln
+    configuration: Release
+name: ELCImagePicker
+id: elcimagepicker
+publisher: Dave Humphreys
+license: component/License.md
+icons: 
+  - component/elcimagepicker_128x128.png
+  - component/elcimagepicker_512x512.png
+publisher-url: https://github.com/newky2k/XamarinSharpPlus/tree/master/iOS/ELCImagePicker
+libraries: 
+  ios-unified: 
+    - src/ELCImagePicker/bin/Release/ELCImagePicker.dll
+summary: A Multi-Image picker that uses the asset library
+details: component/Details.md
+screenshots: 
+  - component/screenshots/Screen1.jpg
+  - component/screenshots/Screen2.jpg
+getting-started: component/GettingStarted.md
+version: 1.4
+samples: 
+  - path: sample/ELCImagePickerSample.sln
+    name: iOS Sample
+    nobuild: "true"
+    configuration: Release|iPhone
+...
